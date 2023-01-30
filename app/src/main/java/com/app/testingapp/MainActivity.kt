@@ -3,38 +3,58 @@ package com.app.testingapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.app.testingapp.ui.theme.TestingAppTheme
+import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TestingAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Greeting("Android")
-                }
-            }
+            MessageCard(Message(author = "Aditya", "I've wrote many articles and books"))
         }
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun MessageCard(msg: Message) {
+    // Add padding around our message
+    Row(modifier = Modifier.padding(all = 10.dp)) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            contentDescription = msg.description,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color.Black)
+        )
+        // Add a horizontal space between the image and the column
+        Spacer(modifier = Modifier.width(10.dp))
+        Column {
+            msg.author?.let { Text(text = it) }
+            Spacer(modifier = Modifier.height(5.dp))
+            msg.body?.let { Text(text = it) }
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    TestingAppTheme {
-        Greeting("Android")
-    }
+fun PreviewMessageCard() {
+    MessageCard(Message(author = "Aditya", "I've wrote many articles and books"))
 }
+
+data class Message(
+    val author: String? = null,
+    val body: String? = null,
+    val description: String? = null
+)
