@@ -3,16 +3,14 @@ package com.app.testingapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,7 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TestingAppTheme {
-                MyApp()
+                MyApp(modifier = Modifier.fillMaxSize())
             }
         }
     }
@@ -31,14 +29,42 @@ class MainActivity : ComponentActivity() {
 
 //This will act like a component here
 @Composable
-fun MyApp(
-    modifier: Modifier = Modifier,
+fun MyApp(modifier: Modifier = Modifier) {
+
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    Surface(modifier) {
+        if (shouldShowOnboarding) {
+            OnBoardingScreen(onContinueClick = { shouldShowOnboarding = false })
+        } else {
+            Greetings()
+        }
+    }
+}
+
+@Composable
+fun Greetings(
     names: List<String> = listOf("World", "Compose", "Adtya")
 ) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         for (name in names) {
             Greeting(name = name)
         }
+    }
+}
+
+@Preview(name = "Light Mode", widthDp = 320)
+@Composable
+fun PreviewMessageCard() {
+    TestingAppTheme {
+        Greetings()
+    }
+}
+
+@Composable
+fun MyAppPreview() {
+    TestingAppTheme {
+        MyApp(Modifier.fillMaxSize())
     }
 }
 
@@ -69,8 +95,34 @@ fun Greeting(name: String) {
     }
 }
 
-@Preview(name = "Light Mode", widthDp = 320)
 @Composable
-fun PreviewMessageCard() {
-    MyApp()
+fun OnBoardingScreen(
+    onContinueClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+//    var shouldShowOnBoarding by remember { mutableStateOf(true) } //this will hold the callBack
+
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(text = "Welcome to the Basic's Codelab")
+        Button(
+            modifier = Modifier.padding(vertical = 24.dp),
+//            onClick = { shouldShowOnBoarding = false }
+            onClick = onContinueClick
+        ) {
+            Text("Continue")
+        }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 320, heightDp = 320)
+@Composable
+fun OnboardingPreview() {
+    TestingAppTheme {
+        OnBoardingScreen(onContinueClick = {}) //Do nothing
+    }
 }
